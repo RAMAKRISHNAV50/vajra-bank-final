@@ -250,9 +250,9 @@ const LoanSanctionPredictor = () => {
       ) : (
         <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-6">
           <div className="w-full max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
               {/* Left Card: Loan Sanction Predictor */}
-              <div className="bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-slate-700">
+              <div className="lg:col-span-2 bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-slate-700">
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 sm:p-10 text-white text-center">
                   <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tight">
                     AI-Powered Loan Sanction Engine
@@ -711,7 +711,7 @@ const LoanSanctionPredictor = () => {
               </div>
 
               {/* Right Card: Video - smaller size */}
-              <div className="bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-slate-700 p-6 sm:p-10 flex flex-col min-h-[400px] sticky top-6">
+              <div className="lg:col-span-1 p-6 sm:p-10 flex flex-col min-h-[400px] sticky top-6">
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-xl text-white text-center mb-6 w-full shadow-lg">
                   <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight">
                     Demo Showcase
