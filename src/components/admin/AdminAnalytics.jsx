@@ -144,7 +144,7 @@ export default function AdminAnalytics({ data = [] }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                 <ChartCard title="A/C Distribution">
                     <PieChart>
-                        <Pie data={stats.accountTypeData} innerRadius={60} outerRadius={80} paddingAngle={8} dataKey="value" stroke="none">
+                        <Pie data={stats.accountTypeData} innerRadius={40} outerRadius={60} paddingAngle={8} dataKey="value" stroke="none">
                             {stats.accountTypeData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={ACCT_COLORS[index % ACCT_COLORS.length]} />
                             ))}
@@ -159,7 +159,7 @@ export default function AdminAnalytics({ data = [] }) {
                         <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} horizontal={false} />
                         <XAxis type="number" hide />
                         <YAxis dataKey="name" type="category" stroke={CHART_THEME.text} fontSize={10} width={60} axisLine={false} tickLine={false} fontWeight="bold" />
-                        <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.03)'}} />
+                        <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(99, 102, 241, 0.1)'}} />
                         <Bar dataKey="Approved" stackId="a" fill={LOAN_STATUS_COLORS.Approved} />
                         <Bar dataKey="Closed" stackId="a" fill={LOAN_STATUS_COLORS.Closed} />
                         <Bar dataKey="Rejected" stackId="a" fill={LOAN_STATUS_COLORS.Rejected} radius={[0, 4, 4, 0]} />
@@ -187,7 +187,7 @@ export default function AdminAnalytics({ data = [] }) {
                         <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} vertical={false} />
                         <XAxis dataKey="name" stroke={CHART_THEME.text} fontSize={10} axisLine={false} tickLine={false} fontWeight="bold" dy={10} />
                         <YAxis hide />
-                        <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.03)'}} />
+                        <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(99, 102, 241, 0.1)'}} />
                         <Bar dataKey="value">
                             {stats.channelData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={CHANNEL_COLORS[entry.name] || CHART_THEME.accentIndigo} />
@@ -201,7 +201,7 @@ export default function AdminAnalytics({ data = [] }) {
                         <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} vertical={false} />
                         <XAxis dataKey="name" stroke={CHART_THEME.text} fontSize={10} axisLine={false} tickLine={false} fontWeight="bold" dy={10} />
                         <YAxis stroke={CHART_THEME.text} fontSize={10} axisLine={false} tickLine={false} allowDecimals={false} />
-                        <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.03)'}} />
+                        <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(99, 102, 241, 0.1)'}} />
                         <Bar dataKey="count" name="Cards Issued">
                             {stats.cardData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={CARD_COLORS[index % CARD_COLORS.length]} />
@@ -216,12 +216,12 @@ export default function AdminAnalytics({ data = [] }) {
 
 function ChartCard({ title, children, className = "" }) {
     return (
-        <div className={`bg-[#0f172a]/60 backdrop-blur-xl border border-white/5 rounded-3xl p-5 md:p-6 shadow-2xl transition-all duration-500 hover:bg-[#0f172a]/80 hover:border-indigo-500/40 group ${className}`}>
-            <h4 className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-[0.25em] flex items-center gap-3 mb-6">
+        <div className={`bg-[#0f172a]/60 backdrop-blur-xl border border-white/5 rounded-3xl p-4 md:p-5 lg:p-6 shadow-2xl transition-all duration-500 hover:bg-[#0f172a]/80 hover:border-indigo-500/40 group ${className}`}>
+            <h4 className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-[0.25em] flex items-center gap-3 mb-4 md:mb-6">
                 <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full shadow-[0_0_8px_#6366f1]"></div>
                 {title}
             </h4>
-            <div className="h-[220px] md:h-[260px] w-full">
+            <div className="h-[180px] sm:h-[220px] md:h-[260px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     {children}
                 </ResponsiveContainer>

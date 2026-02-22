@@ -50,7 +50,7 @@ const AIBotWidget = () => {
   return (
     <>
       {/* Floating AI Bot Widget */}
-      <div className="fixed bottom-8 right-8 z-40">
+      <div className="fixed bottom-18 right-8 z-40">
         <div className="flex flex-col items-end gap-3">
           {/* Typing Text Box */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl px-4 py-3 shadow-lg max-w-xs">

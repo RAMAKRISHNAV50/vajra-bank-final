@@ -17,9 +17,9 @@ import {
   CashStack,
   GraphUp,
   Megaphone,
-  Cpu,
-  Bell
+  Cpu
 } from "react-bootstrap-icons";
+import NotificationBell from "./common/NotificationBell";
 
 export default function AdminNavbar({ admin, onLogout }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -135,10 +135,7 @@ export default function AdminNavbar({ admin, onLogout }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-slate-400 hover:text-indigo-400 hover:bg-white/5 rounded-full transition-all group">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-indigo-500 rounded-full border-2 border-[#020617] group-hover:animate-pulse"></span>
-            </button>
+            <NotificationBell user={admin} />
 
             <div className="relative" ref={profileRef}>
               <button

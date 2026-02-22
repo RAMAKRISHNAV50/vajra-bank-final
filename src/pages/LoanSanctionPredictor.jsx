@@ -241,7 +241,7 @@ const LoanSanctionPredictor = () => {
           {showSkip && (
             <button
               onClick={handleSkip}
-              className="absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-bold text-lg shadow-lg"
+              className="absolute bottom-20 right-4 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-bold text-lg shadow-lg"
             >
               Skip
             </button>

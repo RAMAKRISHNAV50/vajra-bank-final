@@ -205,12 +205,12 @@ export default function AdminDashboard() {
             </div>
             <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">Vajra <span className="text-slate-500">Control</span></h1>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative group">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
+            <div className="relative group w-full sm:w-64 lg:w-64">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400" size={14} />
-              <input type="text" placeholder="Search Identity..." className="bg-slate-900 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-xs font-bold w-64 focus:border-blue-500/50 transition-all text-white outline-none" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              <input type="text" placeholder="Search Identity..." className="bg-slate-900 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-xs font-bold w-full focus:border-blue-500/50 transition-all text-white outline-none" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
-            <button onClick={() => window.location.reload()} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg"><ArrowClockwise /> Refresh</button>
+            <button onClick={() => window.location.reload()} className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg whitespace-nowrap"><ArrowClockwise /> Refresh</button>
           </div>
         </header>
 
