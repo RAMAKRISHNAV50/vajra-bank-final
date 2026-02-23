@@ -149,9 +149,16 @@ export default function DashboardCore({
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
+                                                <div className="flex flex-col items-end gap-2">
                                                     <span className="text-[9px] font-black bg-blue-500/10 text-blue-400 px-2 py-1 rounded border border-blue-500/20 uppercase tracking-widest">
                                                         {app.cardType}
+                                                    </span>
+                                                    <span className={`text-[9px] font-black px-2 py-1 rounded border uppercase tracking-widest ${
+                                                        app.riskLevel === 'Low' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                                        app.riskLevel === 'Medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                                        'bg-red-500/10 text-red-400 border-red-500/20'
+                                                    }`}>
+                                                        Risk: {app.riskLevel}
                                                     </span>
                                                 </div>
                                             </div>

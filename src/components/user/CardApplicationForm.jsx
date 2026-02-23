@@ -64,6 +64,21 @@ const CardApplicationForm = ({ userData, onSubmit, onCancel }) => {
 
     return (
         <div className="max-w-3xl mx-auto bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in duration-500">
+            {/* Risk Level Banner */}
+            <div className="bg-gradient-to-r from-indigo-600/20 to-blue-600/20 border-b border-indigo-500/20 px-10 py-4 flex items-center justify-between">
+                <div>
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Current Risk Assessment</p>
+                    <p className="text-xl font-black text-white mt-1">{riskLevel}</p>
+                </div>
+                <div className={`px-4 py-2 rounded-lg font-black text-xs uppercase tracking-widest ${
+                    riskLevel === 'Low' ? 'bg-emerald-500/20 text-emerald-300' :
+                    riskLevel === 'Medium' ? 'bg-amber-500/20 text-amber-300' :
+                    'bg-red-500/20 text-red-300'
+                }`}>
+                    {riskLevel}
+                </div>
+            </div>
+            
             {/* Step Progress Bar */}
             <div className="bg-white/5 px-10 py-6 flex justify-between border-b border-white/5">
                 {[1, 2, 3].map(s => (

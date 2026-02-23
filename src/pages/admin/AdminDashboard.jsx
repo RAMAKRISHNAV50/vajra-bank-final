@@ -116,11 +116,28 @@ export default function AdminDashboard() {
       const expiry = "02/31";
       const cvv = Math.floor(100 + Math.random()*899).toString();
 
+      // Calculate credit limit based on card type and risk level
+      const getCreditLimit = (cardType, riskLevel) => {
+        const limits = {
+          'Vajra Infinite Credit': { Low: 1000000, Medium: 750000, High: 500000 },
+          'Vajra Premium Credit': { Low: 500000, Medium: 300000, High: 200000 },
+          'Vajra Gold Credit': { Low: 200000, Medium: 150000, High: 100000 },
+          'Vajra Cashback Credit': { Low: 150000, Medium: 100000, High: 75000 },
+          'Vajra Credit Builder': { Low: 50000, Medium: 25000, High: 10000 }
+        };
+        return limits[cardType]?.[riskLevel] || 150000;
+      };
+
+      const creditLimit = getCreditLimit(appData.cardType, appData.riskLevel);
+
       // Step 1: Update Application Status
       await updateDoc(appRef, {
         status: 'approved',
         approvedAt: serverTimestamp(),
-        cardNumber, expiry, cvv
+        cardNumber, 
+        expiry, 
+        cvv,
+        creditLimit
       });
 
       // Step 2: Inject into User Profile
@@ -129,7 +146,7 @@ export default function AdminDashboard() {
         cardType: appData.cardType || "Vajra Infinite",
         cardExpiry: expiry,
         cardCvv: cvv,
-        creditLimit: 150000,
+        creditLimit: creditLimit,
         creditBalance: 0,
         creditUtilization: 0
       });
@@ -137,8 +154,8 @@ export default function AdminDashboard() {
       // Step 3: Notify User
       await addDoc(collection(userDB, 'notifications'), {
         userId: appData.userId,
-        type: 'card',
-        message: `Your ${appData.cardType} has been issued and activated.`,
+        type: 'card_approved',
+        message: `Your ${appData.cardType} has been approved! Credit limit: ₹${creditLimit.toLocaleString()}`,
         createdAt: serverTimestamp(),
         read: false
       });
@@ -151,10 +168,35 @@ export default function AdminDashboard() {
   };
 
   const rejectCard = async (appId) => {
+    const tid = toast.loading("Processing rejection...");
     try {
-      await updateDoc(doc(userDB, 'creditCardApplications', appId), { status: 'rejected' });
-      toast.success("Card application rejected.");
-    } catch (err) { toast.error("Action failed."); }
+      // Get application data first
+      const appRef = doc(userDB, 'creditCardApplications', appId);
+      const appSnap = await getDoc(appRef);
+      if (!appSnap.exists()) throw new Error("Application not found");
+      
+      const appData = appSnap.data();
+      
+      // Update application status
+      await updateDoc(appRef, { 
+        status: 'rejected',
+        rejectedAt: serverTimestamp()
+      });
+      
+      // Notify user
+      await addDoc(collection(userDB, 'notifications'), {
+        userId: appData.userId,
+        type: 'card_rejected',
+        message: `Your ${appData.cardType} application has been declined. You can reapply later.`,
+        createdAt: serverTimestamp(),
+        read: false
+      });
+      
+      toast.success("Application rejected.", { id: tid });
+    } catch (err) { 
+      console.error(err);
+      toast.error("Rejection failed.", { id: tid }); 
+    }
   };
 
   /* -------------------- DATA PROCESSING -------------------- */

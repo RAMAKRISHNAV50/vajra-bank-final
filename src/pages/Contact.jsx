@@ -187,7 +187,7 @@ export default function Contact() {
               <ChatDotsFill size={32} className="mb-6 text-emerald-400" />
               <h3 className="text-xl font-bold text-white mb-3">Live Chat Support</h3>
               <p className="text-slate-400 text-sm mb-8">Chat with our support team in real time via WhatsApp.</p>
-              <a href="https://wa.me/916300608164?text=Hi%20VajraBank%20Support,%20I%20need%20assistance" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-emerald-400 font-bold hover:gap-4 transition-all">
+              <a href="https://wa.me/919347659937?text=Hi%20VajraBank%20Support,%20I%20need%20assistance" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-emerald-400 font-bold hover:gap-4 transition-all">
                 Start Chat <ArrowRight />
               </a>
             </div>

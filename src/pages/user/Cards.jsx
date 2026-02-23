@@ -122,7 +122,7 @@ export default function Cards() {
             {applications.some(a => a.status === 'pending') ? (
               <PendingState app={applications.find(a => a.status === 'pending')} />
             ) : (
-              <EmptyState onApply={() => setShowForm(true)} />
+              <EmptyState onApply={() => setShowForm(true)} userRiskLevel={currentUser?.riskLevel} />
             )}
           </>
         )
@@ -132,10 +132,16 @@ export default function Cards() {
 }
 
 // SUB-COMPONENTS
-const EmptyState = ({ onApply }) => (
+const EmptyState = ({ onApply, userRiskLevel }) => (
   <div className="max-w-xl mx-auto mt-16 bg-slate-900 border border-white/5 rounded-[3rem] p-16 text-center shadow-2xl">
     <CardIcon size={60} className="text-blue-500 mx-auto mb-8" />
     <h2 className="text-2xl font-black text-white mb-4 uppercase">Infinite Credit Awaits</h2>
+    
+    {/* Risk Level Badge */}
+    <div className="inline-block bg-slate-800 border border-white/10 rounded-xl px-4 py-2 mb-6 text-xs font-black uppercase tracking-widest text-blue-400">
+      Risk Profile: <span className="text-white ml-2">{userRiskLevel || 'Standard'}</span>
+    </div>
+    
     <p className="text-slate-400 mb-10 text-sm leading-relaxed">Access premium liquidity with the Vajra Virtual Card. Automated vetting and instant provisioning for high-value accounts.</p>
     <button onClick={onApply} className="w-full bg-blue-600 py-5 rounded-2xl font-black text-white uppercase tracking-[0.2em] hover:bg-blue-500 transition-all active:scale-95 shadow-lg shadow-blue-600/20">
       Start Provisioning
