@@ -81,9 +81,9 @@ export default function CustomerTable({ onView }) {
     // KPI Totals based on current dataset
     const kpis = useMemo(() => [
         { name: 'Total Users', count: data.length, color: '#3b82f6' },
-        { name: 'High Risk', count: data.filter(c => c.riskLevel === 'High').length, color: '#f43f5e' },
-        { name: 'Medium Risk', count: data.filter(c => c.riskLevel === 'Medium').length, color: '#fbbf24' },
-        { name: 'Low Risk', count: data.filter(c => c.riskLevel === 'Low').length, color: '#10b981' }
+        { name: 'High Value', count: data.filter(c => c.riskLevel === 'High').length, color: '#10b981' },
+        { name: 'Medium Value', count: data.filter(c => c.riskLevel === 'Medium').length, color: '#fbbf24' },
+        { name: 'Low Value', count: data.filter(c => c.riskLevel === 'Low').length, color: '#f43f5e' }
     ], [data]);
 
     const indexOfLastRow = currentPage * rowsPerPage;
@@ -117,10 +117,10 @@ export default function CustomerTable({ onView }) {
                     onChange={(e) => { setSelectedRisk(e.target.value); setCurrentPage(1); }}
                     className="bg-[#161b22] border border-white/10 text-[10px] font-black uppercase tracking-widest rounded-xl px-4 py-2 outline-none cursor-pointer hover:border-indigo-500"
                 >
-                    <option value="All Risks">Filter: Risk Level</option>
-                    <option value="High">High Risk</option>
-                    <option value="Medium">Medium Risk</option>
-                    <option value="Low">Low Risk</option>
+                    <option value="All Risks">Customer Category</option>
+                    <option value="High">High Value</option>
+                    <option value="Medium">Medium value</option>
+                    <option value="Low">Low Value</option>
                 </select>
 
                 <button onClick={() => {setSearchTerm(""); setSelectedRisk("All Risks"); setSelectedStatus("All Status");}} className="text-slate-500 hover:text-white transition-colors">
@@ -172,7 +172,7 @@ export default function CustomerTable({ onView }) {
                             <tr className="bg-white/[0.02] border-b border-white/5">
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Entity ID</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Identity Details</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Neural Risk Level</th>
+                                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Predication Value</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Status</th>
                                 <th className="px-8 py-6 text-right uppercase text-[10px] text-slate-500 tracking-[0.2em]">Vault Access</th>
                             </tr>
@@ -187,9 +187,9 @@ export default function CustomerTable({ onView }) {
                                     </td>
                                     <td className="px-8 py-5">
                                         <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border shadow-lg ${
-                                            customer.riskLevel === 'High' ? 'text-rose-400 border-rose-500/30 bg-rose-500/10' :
+                                            customer.riskLevel === 'High' ? 'text-emerald-400 border-rose-500/30 bg-rose-500/10' :
                                             customer.riskLevel === 'Medium' ? 'text-amber-400 border-amber-500/30 bg-amber-500/10' :
-                                            'text-emerald-400 border-emerald-500/30 bg-emerald-500/10'
+                                            'text-rose-400 border-emerald-500/30 bg-emerald-500/10'
                                         }`}>
                                             {customer.riskLevel} Profile
                                         </span>
