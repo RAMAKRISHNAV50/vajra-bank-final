@@ -2,7 +2,7 @@ import React from 'react';
 import { Gift, Briefcase, CreditCard, Cash, Star } from 'react-bootstrap-icons';
 
 const RECOM_DATA = {
-  'Low': {
+  'High': {
     segmentLabel: 'High Value Customers',
     scheme: { name: 'Platinum / Zero Balance', category: 'Scheme', benefits: ['Priority services', 'Zero balance', 'High limits'] },
     investment: { name: 'Equity Mutual Funds', category: 'Investment', benefits: ['High wealth growth', 'Inflation beating', 'Aggressive'] },
@@ -16,7 +16,7 @@ const RECOM_DATA = {
     credit: { name: 'Vajra Gold Credit', category: 'Credit Card', benefits: ['Interest-free 45d', 'Cashback', 'EMI facility'] },
     debit: { name: 'Vajra Gold Debit', category: 'Debit Card', benefits: ['Free ATM txns', 'Low annual fee', 'Shopping discounts'] }
   },
-  'High': {
+  'Low': {
     segmentLabel: 'Credit Builder Program',
     scheme: { name: 'Credit Repair Program', category: 'Scheme', benefits: ['Improve CIBIL', 'Discipline', 'Secure limit'] },
     investment: { name: 'Debt Mutual Funds', category: 'Investment', benefits: ['Capital protection', 'Stable income', 'Low risk'] },
