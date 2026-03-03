@@ -48,7 +48,7 @@ export default function CustomerModal({ customer, onAction, onClose }) {
                     setRiskData({ riskLevel: "Not Applicable" });
                 } else {
                     try {
-                        const riskRes = await fetch(`http://127.0.0.1:8000/api/predict-risk`, {
+                        const riskRes = await fetch(`https://vajra-bank-backend.onrender.com/api/predict-risk`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(currentData) 

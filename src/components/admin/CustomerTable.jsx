@@ -85,7 +85,7 @@ export default function CustomerTable({ onView }) {
 
                 if (usersToPredict.length > 0) {
                     try {
-                        const response = await fetch('http://127.0.0.1:8000/api/predict-risk-batch', {
+                        const response = await fetch('https://vajra-bank-backend.onrender.com/api/predict-risk-batch', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(usersToPredict)
