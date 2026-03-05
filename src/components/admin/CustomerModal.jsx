@@ -59,13 +59,13 @@ export default function CustomerModal({ customer, onAction, onClose }) {
                             if (rData.success) {
                                 setRiskData({ riskLevel: rData.predictedRisk });
                             } else {
-                                setRiskData({ riskLevel: "Server Offline" });
+                                setRiskData({ riskLevel: "Pending" });
                             }
                         } else {
-                            setRiskData({ riskLevel: "Server Offline" });
+                            setRiskData({ riskLevel: "Pending" });
                         }
                     } catch (err) {
-                        setRiskData({ riskLevel: "Server Offline" });
+                        setRiskData({ riskLevel: "Pending" });
                     }
                 }
             } catch (err) {
@@ -172,7 +172,7 @@ export default function CustomerModal({ customer, onAction, onClose }) {
     if (riskLevel === 'High') riskColor = "text-emerald-400";
     if (riskLevel === 'Medium') riskColor = "text-amber-400";
     if (riskLevel === 'Low') riskColor = "text-rose-500";
-    if (riskLevel === 'Not Applicable' || riskLevel === 'Server Offline') riskColor = "text-slate-500";
+    if (riskLevel === 'Not Applicable' || riskLevel === 'Pending') riskColor = "text-slate-500";
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-300">
