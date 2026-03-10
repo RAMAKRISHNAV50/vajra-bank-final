@@ -1,6 +1,36 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 
+// Reusable Input Component moved OUTSIDE to prevent re-rendering focus loss
+const InputField = ({ label, name, type = "text", placeholder, options, value, error, onChange }) => (
+  <div className="flex flex-col space-y-1.5">
+    <label className="text-sm font-medium text-slate-300">{label}</label>
+    {options ? (
+      <select
+        name={name}
+        value={value || ""}
+        onChange={onChange}
+        className={`w-full bg-slate-900/50 border ${error ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"} text-slate-100 rounded-xl px-4 py-3 outline-none focus:ring-4 transition-all duration-200`}
+      >
+        <option value="" disabled>Select {label}</option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
+    ) : (
+      <input
+        type={type}
+        name={name}
+        value={value || ""}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`w-full bg-slate-900/50 border ${error ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"} text-slate-100 rounded-xl px-4 py-3 outline-none focus:ring-4 transition-all duration-200`}
+      />
+    )}
+    {error && <span className="text-xs text-red-400 mt-1">{error}</span>}
+  </div>
+);
+
 const LoanSanctionPredictor = () => {
   const [formData, setFormData] = useState({
     Age: 35,
@@ -130,36 +160,6 @@ const LoanSanctionPredictor = () => {
     }
   };
 
-  // Reusable Input Component for cleaner JSX
-  const InputField = ({ label, name, type = "text", placeholder, options }) => (
-    <div className="flex flex-col space-y-1.5">
-      <label className="text-sm font-medium text-slate-300">{label}</label>
-      {options ? (
-        <select
-          name={name}
-          value={formData[name]}
-          onChange={handleChange}
-          className={`w-full bg-slate-900/50 border ${errors[name] ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"} text-slate-100 rounded-xl px-4 py-3 outline-none focus:ring-4 transition-all duration-200`}
-        >
-          <option value="" disabled>Select {label}</option>
-          {options.map((opt) => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type={type}
-          name={name}
-          value={formData[name]}
-          onChange={handleChange}
-          placeholder={placeholder}
-          className={`w-full bg-slate-900/50 border ${errors[name] ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"} text-slate-100 rounded-xl px-4 py-3 outline-none focus:ring-4 transition-all duration-200`}
-        />
-      )}
-      {errors[name] && <span className="text-xs text-red-400 mt-1">{errors[name]}</span>}
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-[#0B1120] font-sans selection:bg-indigo-500/30">
       <Navbar />
@@ -183,10 +183,20 @@ const LoanSanctionPredictor = () => {
                   Personal Profile
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <InputField label="Age" name="Age" type="number" placeholder="e.g. 30" />
-                  <InputField label="Current Location" name="Current Location" placeholder="e.g. Mumbai" />
-                  <InputField label="Employment Type" name="Employment Type" options={["Salaried", "Business", "Freelancer", "Self-Employed"]} />
-                  <InputField label="Credit Score" name="Credit Score" type="number" placeholder="300 - 900" />
+                  <InputField label="Age" name="Age" type="number" placeholder="e.g. 30" value={formData.Age} error={errors.Age} onChange={handleChange} />
+                  
+                  {/* UPDATED: Current Location is now a dropdown menu */}
+                  <InputField 
+                    label="Current Location" 
+                    name="Current Location" 
+                    options={["Hyderabad", "Mumbai", "Bengaluru", "Chennai", "Kochi", "Pune", "Kolkata"]} 
+                    value={formData["Current Location"]} 
+                    error={errors["Current Location"]} 
+                    onChange={handleChange} 
+                  />
+
+                  <InputField label="Employment Type" name="Employment Type" options={["Salaried", "Business", "Freelancer", "Self-Employed"]} value={formData["Employment Type"]} error={errors["Employment Type"]} onChange={handleChange} />
+                  <InputField label="Credit Score" name="Credit Score" type="number" placeholder="300 - 900" value={formData["Credit Score"]} error={errors["Credit Score"]} onChange={handleChange} />
                 </div>
               </div>
 
@@ -199,12 +209,12 @@ const LoanSanctionPredictor = () => {
                   Financials & Stability
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <InputField label="Annual Income (₹)" name="AnnualIncome" type="number" placeholder="Yearly Salary" />
-                  <InputField label="Insurance Premiums (₹)" name="Insurance Premiums" type="number" placeholder="e.g. 5000" />
-                  <InputField label="Years in Current Job" name="Years in Current Job" type="number" placeholder="e.g. 3" />
-                  <InputField label="Years in Current City" name="Years in Current City" type="number" placeholder="e.g. 4" />
-                  <InputField label="Residential Status" name="Residential Status" options={["Owned", "Rented", "Company Provided"]} />
-                  <InputField label="Residence Type" name="Residence Type" options={["Apartment", "Independent House", "Villa"]} />
+                  <InputField label="Annual Income (₹)" name="AnnualIncome" type="number" placeholder="Yearly Salary" value={formData.AnnualIncome} error={errors.AnnualIncome} onChange={handleChange} />
+                  <InputField label="Insurance Premiums (₹)" name="Insurance Premiums" type="number" placeholder="e.g. 5000" value={formData["Insurance Premiums"]} error={errors["Insurance Premiums"]} onChange={handleChange} />
+                  <InputField label="Years in Current Job" name="Years in Current Job" type="number" placeholder="e.g. 3" value={formData["Years in Current Job"]} error={errors["Years in Current Job"]} onChange={handleChange} />
+                  <InputField label="Years in Current City" name="Years in Current City" type="number" placeholder="e.g. 4" value={formData["Years in Current City"]} error={errors["Years in Current City"]} onChange={handleChange} />
+                  <InputField label="Residential Status" name="Residential Status" options={["Owned", "Rented", "Company Provided"]} value={formData["Residential Status"]} error={errors["Residential Status"]} onChange={handleChange} />
+                  <InputField label="Residence Type" name="Residence Type" options={["Apartment", "Independent House", "Villa"]} value={formData["Residence Type"]} error={errors["Residence Type"]} onChange={handleChange} />
                 </div>
               </div>
 
@@ -217,12 +227,12 @@ const LoanSanctionPredictor = () => {
                   Loan Requirements
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <InputField label="Loan Type" name="Loan Type" options={["Personal", "Auto", "Mortgage", "Other"]} />
-                  <InputField label="Banking Tenure (Years)" name="Tenure" type="number" placeholder="Years with bank" />
-                  <InputField label="Requested Loan (₹)" name="requested_amount" type="number" placeholder="e.g. 500000" />
-                  <InputField label="Loan Tenure (Years)" name="years" type="number" placeholder="e.g. 5" />
+                  <InputField label="Loan Type" name="Loan Type" options={["Personal", "Auto", "Mortgage", "Other"]} value={formData["Loan Type"]} error={errors["Loan Type"]} onChange={handleChange} />
+                  <InputField label="Banking Tenure (Years)" name="Tenure" type="number" placeholder="Years with bank" value={formData.Tenure} error={errors.Tenure} onChange={handleChange} />
+                  <InputField label="Requested Loan (₹)" name="requested_amount" type="number" placeholder="e.g. 500000" value={formData.requested_amount} error={errors.requested_amount} onChange={handleChange} />
+                  <InputField label="Loan Tenure (Years)" name="years" type="number" placeholder="e.g. 5" value={formData.years} error={errors.years} onChange={handleChange} />
                   <div className="sm:col-span-2">
-                    <InputField label="Expected Interest Rate (%)" name="annual_interest_rate" type="number" placeholder="e.g. 10.5" />
+                    <InputField label="Expected Interest Rate (%)" name="annual_interest_rate" type="number" placeholder="e.g. 10.5" value={formData.annual_interest_rate} error={errors.annual_interest_rate} onChange={handleChange} />
                   </div>
                 </div>
               </div>
@@ -254,7 +264,6 @@ const LoanSanctionPredictor = () => {
 
             {/* Disclaimer Alert */}
             <div className="bg-amber-500/10 border border-amber-500/20 p-5 rounded-2xl flex items-start gap-3 text-amber-300">
-              {/* Updated SVG to a warning triangle */}
               <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
@@ -326,4 +335,5 @@ const LoanSanctionPredictor = () => {
     </div>
   );
 };
+
 export default LoanSanctionPredictor;
