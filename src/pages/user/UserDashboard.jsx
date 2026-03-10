@@ -195,7 +195,7 @@ export default function UserDashboard() {
           </p>
           {userData?.isExistedUser ? (
             <>
-              <h3 className={`text-2xl font-black mt-2 ${displayRisk === 'High' ? 'text-rose-500' : 'text-emerald-400'}`}>{displayRisk} Risk</h3>
+              <h3 className={`text-2xl font-black mt-2 ${displayRisk === 'High' ? 'text-rose-500' : 'text-emerald-400'}`}>{displayRisk}</h3>
               <p className="text-[9px] text-slate-500 font-bold uppercase mt-2">Next prediction value updated in 30 days</p>
             </>
           ) : (
