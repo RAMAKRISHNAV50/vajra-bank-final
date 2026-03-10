@@ -130,9 +130,9 @@ export default function CustomerTable({ onView }) {
 
     const kpis = useMemo(() => [
         { name: 'Total Users', count: data.length, color: '#3b82f6' },
-        { name: 'High Risk', count: data.filter(c => c.riskLevel === 'High').length, color: '#10b981' },
-        { name: 'Med Risk', count: data.filter(c => c.riskLevel === 'Medium').length, color: '#fbbf24' },
-        { name: 'Low Risk', count: data.filter(c => c.riskLevel === 'Low').length, color: '#f43f5e' }
+        { name: 'High Profile', count: data.filter(c => c.riskLevel === 'High').length, color: '#10b981' },
+        { name: 'Medium Profile', count: data.filter(c => c.riskLevel === 'Medium').length, color: '#fbbf24' },
+        { name: 'Low Profile', count: data.filter(c => c.riskLevel === 'Low').length, color: '#f43f5e' }
     ], [data]);
 
     const currentRows = filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
@@ -151,7 +151,7 @@ export default function CustomerTable({ onView }) {
                 <ShieldExclamation size={24} className="shrink-0" />
                 <div>
                     <h3 className="font-bold text-xs uppercase tracking-widest">AI Prediction Disclaimer</h3>
-                    <p className="text-[11px] opacity-80 mt-1">Our AI models can occasionally make mistakes and predictions are based on historical data patterns. Please consult with the respected person or bank authority to know your exact Credit Profile Status.</p>
+                    <p className="text-[11px] opacity-80 mt-1">Our AI models can make mistakes and predictions are based on historical data patterns. Please consult with the respected person or bank authority to know your exact Credit Profile Status.</p>
                 </div>
             </div>
 
@@ -170,10 +170,10 @@ export default function CustomerTable({ onView }) {
                     onChange={(e) => { setSelectedRisk(e.target.value); setCurrentPage(1); }}
                     className="bg-[#161b22] border border-white/10 text-xs font-bold uppercase rounded-lg px-4 py-2 outline-none hover:border-indigo-500 cursor-pointer"
                 >
-                    <option value="All Risks">Filter: All Risks</option>
-                    <option value="High">High Risk</option>
-                    <option value="Medium">Medium Risk</option>
-                    <option value="Low">Low Risk</option>
+                    <option value="All Risks">Filter: All Profiles</option>
+                    <option value="High">High Profiles</option>
+                    <option value="Medium">Medium Profiles</option>
+                    <option value="Low">Low Profiles</option>
                     <option value="Pending">Pending (New Users)</option>
                 </select>
             </div>

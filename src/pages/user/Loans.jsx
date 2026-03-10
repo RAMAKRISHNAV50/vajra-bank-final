@@ -12,12 +12,13 @@ export default function Loans() {
   const { currentUser, loading: authLoading } = useCurrentUser();
   
   const [firebaseApplications, setFirebaseApplications] = useState([]);
-  const [bankData, setBankData] = useState([]);
+  const [firestoreBankData, setFirestoreBankData] = useState([]); // legacy users (users1)
+  const [firestoreNewUserData, setFirestoreNewUserData] = useState([]); // new users (users)
   const [submitting, setSubmitting] = useState(false);
 
   // 1. Dynamic Loan Eligibility based on Risk Level
   const getEligibleLoans = (risk) => {
-    if (['Low', 'Safe', 'High Value Customers'].includes(risk)) {
+    if (['Low', 'Not Applicable', 'High Value Customers'].includes(risk)) {
       return [
         { Loan_Type: 'Home Loan', Loan_Amount: '30L – 5Cr', Loan_Interest: '8.25%' },
         { Loan_Type: 'Auto Loan', Loan_Amount: '5L – 50L', Loan_Interest: '8.5%' },
@@ -45,15 +46,28 @@ export default function Loans() {
     reason: ''
   });
 
-  // 2. Fetch Legacy Records
+  // 2. Fetch User Records from BOTH users1 (legacy) and users (new)
   useEffect(() => {
-    fetch('/bankData.json')
-      .then((res) => res.json())
-      .then((json) => setBankData(json))
-      .catch((err) => console.error("Legacy data fetch error:", err));
-  }, []);
+    if (!currentUser?.email) return;
 
-  // 3. REAL-TIME Listener for Loan Applications
+    // A. Querying "users1" (Legacy Users)
+    const q1 = query(collection(userDB, "users1"), where("Email", "==", currentUser.email));
+    const unsub1 = onSnapshot(q1, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setFirestoreBankData(data);
+    }, (error) => console.error("users1 fetch error:", error));
+
+    // B. Querying "users" (New Users)
+    const q2 = query(collection(userDB, "users"), where("email", "==", currentUser.email));
+    const unsub2 = onSnapshot(q2, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setFirestoreNewUserData(data);
+    }, (error) => console.error("users fetch error:", error));
+
+    return () => { unsub1(); unsub2(); };
+  }, [currentUser]);
+
+  // 3. REAL-TIME Listener for newly created Loan Applications
   useEffect(() => {
     if (!currentUser?.uid) return;
     const q = query(collection(userDB, 'loanApplications'), where('userId', '==', currentUser.uid));
@@ -64,29 +78,38 @@ export default function Loans() {
     });
   }, [currentUser]);
 
-  // 4. Combined History Logic
+  // 4. Combined History Logic (Merges Firebase Apps + Legacy Users + New Users)
   const combinedHistory = useMemo(() => {
     if (!currentUser?.email) return firebaseApplications;
-    const legacyHistory = bankData
-      .filter(item => item.Email?.toLowerCase() === currentUser.email.toLowerCase())
+
+    // Combine both legacy and new user datasets
+    const allUserData = [...firestoreBankData, ...firestoreNewUserData];
+
+    const historicalLoans = allUserData
+      .filter(item => {
+        const itemEmail = (item.Email || item.email || "").toLowerCase();
+        return itemEmail === currentUser.email.toLowerCase();
+      })
+      // Only include items that ACTUALLY have loan data to prevent blank history cards
+      .filter(item => item["Loan Amount"] || item["Loan Type"])
       .map((item, index) => ({
-        id: item["Loan ID"] || `legacy-${index}`,
+        id: item["Loan ID"] || `history-${index}`,
         loanType: (item["Loan Type"] || "General") + " Loan",
         amount: item["Loan Amount"] || 0,
         tenureMonths: item["Loan Term"] || 0,
         status: item["Loan Status"]?.toLowerCase() || 'resolved',
-        createdAtDate: item["Approval/Rejection Date"],
-        source: 'legacy'
+        createdAtDate: item["Approval/Rejection Date"] || item.createdAtDate,
+        source: 'history'
       }));
     
-    return [...firebaseApplications, ...legacyHistory].sort((a, b) => {
+    return [...firebaseApplications, ...historicalLoans].sort((a, b) => {
       const dateA = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAtDate || 0).getTime();
       const dateB = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAtDate || 0).getTime();
       return dateB - dateA;
     });
-  }, [firebaseApplications, bankData, currentUser]);
+  }, [firebaseApplications, firestoreBankData, firestoreNewUserData, currentUser]);
 
-  // 5. Submit Application (UPDATED: RESOLVED NAME LOGIC)
+  // 5. Submit Application
   const handleApply = async (e) => {
     e.preventDefault();
     if (!currentUser?.uid || !currentUser?.email) return;
@@ -104,7 +127,7 @@ export default function Loans() {
       await addDoc(collection(userDB, 'loanApplications'), {
         userId: currentUser.uid,
         userEmail: currentUser.email.toLowerCase(),
-        userName: resolvedName, // Fixed Name passed to Admin
+        userName: resolvedName, 
         loanType: formData.loanType,
         amount: Number(formData.amount),
         tenureMonths: Number(formData.tenure),
@@ -227,6 +250,11 @@ export default function Loans() {
                   </div>
                 </div>
               ))}
+              {combinedHistory.length === 0 && (
+                <div className="text-center p-12 text-slate-500 border border-dashed border-slate-700 rounded-3xl">
+                  No loan history found for this account.
+                </div>
+              )}
             </div>
           </div>
         </div>
