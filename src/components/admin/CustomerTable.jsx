@@ -93,7 +93,7 @@ export default function CustomerTable({ onView }) {
 
     const runBackgroundPredictions = async (users) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/predict-risk-batch', {
+            const response = await fetch('https://vajra-bank-backend.onrender.com/api/predict-risk-batch', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(users.map(u => ({ customerId: u.customerId, ...u.mlFeatures })))
@@ -151,7 +151,7 @@ export default function CustomerTable({ onView }) {
                 <ShieldExclamation size={24} className="shrink-0" />
                 <div>
                     <h3 className="font-bold text-xs uppercase tracking-widest">AI Prediction Disclaimer</h3>
-                    <p className="text-[11px] opacity-80 mt-1">Predictions for new users are available after 30 days of activity. Consult bank authorities for finalized profiles.</p>
+                    <p className="text-[11px] opacity-80 mt-1">Our AI models can occasionally make mistakes and predictions are based on historical data patterns. Please consult with the respected person or bank authority to know your exact Credit Profile Status.</p>
                 </div>
             </div>
 

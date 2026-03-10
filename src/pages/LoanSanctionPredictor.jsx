@@ -1,23 +1,23 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar"
+import Navbar from "../components/Navbar";
 
 const LoanSanctionPredictor = () => {
   const [formData, setFormData] = useState({
-    Age: "",
-    "Employment Type": "",
-    "Credit Score": "",
-    "Current Location": "",
-    Tenure: "",
-    "Years in Current City": "",
-    "Years in Current Job": "",
-    "Insurance Premiums": "",
-    "Residential Status": "",
-    "Residence Type": "",
-    "Loan Type": "",
-    AnnualIncome: "",
-    requested_amount: "",
-    years: "",
-    annual_interest_rate: ""
+    Age: 35,
+    "Employment Type": "Salaried",
+    "Credit Score": 750,
+    "Current Location": "Mumbai",
+    Tenure: 5,
+    "Years in Current City": 4,
+    "Years in Current Job": 3,
+    "Insurance Premiums": 5000,
+    "Residential Status": "Owned",
+    "Residence Type": "Apartment",
+    "Loan Type": "Personal",
+    AnnualIncome: 1200000,
+    requested_amount: 500000,
+    years: 5,
+    annual_interest_rate: 10.5
   });
 
   const [errors, setErrors] = useState({});
@@ -40,26 +40,26 @@ const LoanSanctionPredictor = () => {
     const newErrors = {};
     const rules = {
       Age: { required: true, min: 18, max: 100, message: "Age must be at least 18." },
-      "Employment Type": { required: true, message: "Employment Type is required." },
-      "Credit Score": { required: true, min: 300, max: 900, message: "Credit Score must be between 300-900." },
-      "Current Location": { required: true, message: "Location is required." },
-      Tenure: { required: true, min: 0, max: 50, message: "Relationship Tenure is required." },
-      "Years in Current City": { required: true, min: 0, max: 50, message: "Years in City is required." },
-      "Years in Current Job": { required: true, min: 0, max: 50, message: "Years in Job is required." },
-      "Insurance Premiums": { required: true, min: 0, max: 1000000, message: "Insurance Premiums required." },
-      "Residential Status": { required: true, message: "Residential Status is required." },
-      "Residence Type": { required: true, message: "Residence Type is required." },
-      "Loan Type": { required: true, message: "Loan Type is required." },
-      AnnualIncome: { required: true, min: 10000, message: "Annual Income must be at least ₹10,000." },
-      requested_amount: { required: true, min: 1000, message: "Requested Amount must be at least ₹1,000." },
-      years: { required: true, min: 1, max: 30, message: "Loan Tenure must be 1-30 years." },
-      annual_interest_rate: { required: true, min: 1, max: 30, message: "Rate must be 1-30%." }
+      "Employment Type": { required: true, message: "Required." },
+      "Credit Score": { required: true, min: 300, max: 900, message: "Must be 300-900." },
+      "Current Location": { required: true, message: "Required." },
+      Tenure: { required: true, min: 0, max: 50, message: "Required." },
+      "Years in Current City": { required: true, min: 0, max: 50, message: "Required." },
+      "Years in Current Job": { required: true, min: 0, max: 50, message: "Required." },
+      "Insurance Premiums": { required: true, min: 0, max: 1000000, message: "Required." },
+      "Residential Status": { required: true, message: "Required." },
+      "Residence Type": { required: true, message: "Required." },
+      "Loan Type": { required: true, message: "Required." },
+      AnnualIncome: { required: true, min: 10000, message: "Min ₹10,000." },
+      requested_amount: { required: true, min: 1000, message: "Min ₹1,000." },
+      years: { required: true, min: 1, max: 30, message: "Must be 1-30 yrs." },
+      annual_interest_rate: { required: true, min: 1, max: 30, message: "Rate 1-30%." }
     };
 
     for (const [key, rule] of Object.entries(rules)) {
       const val = formData[key];
       if (rule.required && (val === "" || val === null || val === undefined)) {
-        newErrors[key] = `${key} is required.`;
+        newErrors[key] = `Required`;
         continue;
       }
       if (typeof val === "number") {
@@ -79,12 +79,12 @@ const LoanSanctionPredictor = () => {
 
     if (!validateForm()) {
       setLoading(false);
-      setError("Please fill all required fields correctly.");
+      setError("Please check the highlighted fields and try again.");
       return;
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/predict-loan", {
+      const response = await fetch("https://vajra-bank-backend.onrender.com/api/predict-loan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -101,7 +101,7 @@ const LoanSanctionPredictor = () => {
             status: "Rejected",
             eligible_amount: Math.round(eligible_amount),
             requested_amount,
-            reason: `Exceeds eligibility. You are eligible only up to ₹${Math.round(eligible_amount).toLocaleString("en-IN")}.`
+            reason: `Amount exceeds eligibility. You are approved for up to ₹${Math.round(eligible_amount).toLocaleString("en-IN")}.`
           });
         } else {
           const P = requested_amount, r = annual_interest_rate / 12 / 100, n = years * 12;
@@ -110,7 +110,7 @@ const LoanSanctionPredictor = () => {
           const total_interest = total_payment - P;
 
           setOffer({
-            status: "Eligible",
+            status: "Approved",
             eligible_amount: Math.round(eligible_amount),
             requested_amount,
             tenure_years: years,
@@ -124,187 +124,206 @@ const LoanSanctionPredictor = () => {
         setError(data.predictedLoanAmount || "Prediction failed.");
       }
     } catch (err) {
-      setError("Server connection failed.");
+      setError("Unable to connect to the server. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Reusable Input Component for cleaner JSX
+  const InputField = ({ label, name, type = "text", placeholder, options }) => (
+    <div className="flex flex-col space-y-1.5">
+      <label className="text-sm font-medium text-slate-300">{label}</label>
+      {options ? (
+        <select
+          name={name}
+          value={formData[name]}
+          onChange={handleChange}
+          className={`w-full bg-slate-900/50 border ${errors[name] ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"} text-slate-100 rounded-xl px-4 py-3 outline-none focus:ring-4 transition-all duration-200`}
+        >
+          <option value="" disabled>Select {label}</option>
+          {options.map((opt) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={formData[name]}
+          onChange={handleChange}
+          placeholder={placeholder}
+          className={`w-full bg-slate-900/50 border ${errors[name] ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : "border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20"} text-slate-100 rounded-xl px-4 py-3 outline-none focus:ring-4 transition-all duration-200`}
+        />
+      )}
+      {errors[name] && <span className="text-xs text-red-400 mt-1">{errors[name]}</span>}
+    </div>
+  );
+
   return (
-    <>
+    <div className="min-h-screen bg-[#0B1120] font-sans selection:bg-indigo-500/30">
       <Navbar />
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-6">
-        <div className="w-full max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            
-            {/* Left Card: Input Form */}
-            <div className="lg:col-span-2 bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-slate-700">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 sm:p-10 text-white text-center">
-                <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tight">AI-Powered Loan Sanction Engine</h1>
-                <p className="text-blue-100 text-xs sm:text-sm mt-2 font-medium opacity-90">Real‑Time AI Eligibility & EMI Calculation</p>
-              </div>
 
-              <form onSubmit={handleSubmit} className="p-6 sm:p-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-                  
-                  {/* Row 1: Personal Basics */}
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Age</label>
-                    <input type="number" name="Age" value={formData.Age} onChange={handleChange} placeholder="e.g. 45" className={`bg-slate-700 border ${errors.Age ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Current Location</label>
-                    <input type="text" name="Current Location" value={formData["Current Location"]} onChange={handleChange} placeholder="City Name" className={`bg-slate-700 border ${errors["Current Location"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Employment Type</label>
-                    <select name="Employment Type" value={formData["Employment Type"]} onChange={handleChange} className={`bg-slate-700 border ${errors["Employment Type"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 outline-none focus:ring-2 focus:ring-blue-500`}>
-                      <option value="">Select</option>
-                      <option value="Business">Business</option>
-                      <option value="Salaried">Salaried</option>
-                      <option value="Freelancer">Freelancer</option>
-                      <option value="Self-Employed">Self-Employed</option>
-                    </select>
-                  </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">Loan Eligibility Predictor</h1>
+          <p className="text-slate-400 mt-2 text-sm sm:text-base">Get instant AI-powered insights on your loan approval chances and EMI estimates.</p>
+        </div>
 
-                  {/* Row 2: Financial/Job Metrics */}
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Annual Income (₹)</label>
-                    <input type="number" name="AnnualIncome" value={formData.AnnualIncome} onChange={handleChange} placeholder="Yearly Salary" className={`bg-slate-700 border ${errors.AnnualIncome ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Years in Current Job</label>
-                    <input type="number" name="Years in Current Job" value={formData["Years in Current Job"]} onChange={handleChange} placeholder="e.g. 3" className={`bg-slate-700 border ${errors["Years in Current Job"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Years in Current City</label>
-                    <input type="number" name="Years in Current City" value={formData["Years in Current City"]} onChange={handleChange} placeholder="e.g. 5" className={`bg-slate-700 border ${errors["Years in Current City"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-                  {/* Row 3: Housing/History */}
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Credit Score</label>
-                    <input type="number" name="Credit Score" value={formData["Credit Score"]} onChange={handleChange} placeholder="300 - 900" className={`bg-slate-700 border ${errors["Credit Score"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Residential Status</label>
-                    <select name="Residential Status" value={formData["Residential Status"]} onChange={handleChange} className={`bg-slate-700 border ${errors["Residential Status"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 outline-none focus:ring-2 focus:ring-blue-500`}>
-                      <option value="">Select</option>
-                      <option value="Owned">Owned</option>
-                      <option value="Rented">Rented</option>
-                      <option value="Company Provided">Company Provided</option>
-                    </select>
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Residence Type</label>
-                    <select name="Residence Type" value={formData["Residence Type"]} onChange={handleChange} className={`bg-slate-700 border ${errors["Residence Type"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 outline-none focus:ring-2 focus:ring-blue-500`}>
-                      <option value="">Select</option>
-                      <option value="Apartment">Apartment</option>
-                      <option value="Independent House">Independent House</option>
-                      <option value="Villa">Villa</option>
-                    </select>
-                  </div>
+          {/* Left Column: Form */}
+          <div className="lg:col-span-8 bg-[#1E293B] border border-slate-800 rounded-3xl shadow-xl overflow-hidden">
+            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-10">
 
-                  {/* Row 4: Bank Relationship */}
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Banking Tenure (Yrs)</label>
-                    <input type="number" name="Tenure" value={formData.Tenure} onChange={handleChange} placeholder="e.g. 4" className={`bg-slate-700 border ${errors.Tenure ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Insurance Premiums (₹)</label>
-                    <input type="number" name="Insurance Premiums" value={formData["Insurance Premiums"]} onChange={handleChange} placeholder="e.g. 2000" className={`bg-slate-700 border ${errors["Insurance Premiums"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Loan Type</label>
-                    <select name="Loan Type" value={formData["Loan Type"]} onChange={handleChange} className={`bg-slate-700 border ${errors["Loan Type"] ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 outline-none focus:ring-2 focus:ring-blue-500`}>
-                      <option value="">Select</option>
-                      <option value="Personal">Personal</option>
-                      <option value="Auto">Auto</option>
-                      <option value="Mortgage">Mortgage</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  {/* Row 5: Application Details */}
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Requested Loan (₹)</label>
-                    <input type="number" name="requested_amount" value={formData.requested_amount} onChange={handleChange} placeholder="e.g. 500000" className={`bg-slate-700 border ${errors.requested_amount ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Loan tenure (Years)</label>
-                    <input type="number" name="years" value={formData.years} onChange={handleChange} placeholder="e.g. 5" className={`bg-slate-700 border ${errors.years ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Interest Rate (%)</label>
-                    <input type="number" name="annual_interest_rate" value={formData.annual_interest_rate} onChange={handleChange} placeholder="e.g. 11" className={`bg-slate-700 border ${errors.annual_interest_rate ? "border-red-500" : "border-slate-600"} text-white rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none`} />
-                  </div>
-                </div>
-
-                {error && <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/50 text-red-400 text-xs font-bold uppercase tracking-widest">{error}</div>}
-
-                <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all transform active:scale-[0.98] disabled:opacity-50 mt-8 shadow-xl uppercase tracking-widest text-sm">
-                  {loading ? "Calculating Offer..." : "Calculate Offer"}
-                </button>
-              </form>
-            </div>
-
-            {/* Right Card: Prediction Results */}
-            <div className="lg:col-span-1 flex flex-col min-h-[400px] sticky top-6 gap-6">
-              <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl flex items-start gap-3 text-amber-400 shadow-xl">
-                <svg className="w-6 h-6 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                <div>
-                  <h3 className="font-bold text-[10px] sm:text-xs uppercase tracking-widest">AI Prediction Disclaimer</h3>
-                  <p className="text-[10px] opacity-80 mt-1 leading-relaxed">Our AI models can occasionally make mistakes. Please consult a respected representative to confirm your true eligibility profile.</p>
+              {/* Section 1: Personal Profile */}
+              <div>
+                <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">1</div>
+                  Personal Profile
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <InputField label="Age" name="Age" type="number" placeholder="e.g. 30" />
+                  <InputField label="Current Location" name="Current Location" placeholder="e.g. Mumbai" />
+                  <InputField label="Employment Type" name="Employment Type" options={["Salaried", "Business", "Freelancer", "Self-Employed"]} />
+                  <InputField label="Credit Score" name="Credit Score" type="number" placeholder="300 - 900" />
                 </div>
               </div>
 
-              {offer ? (
-                <div className={`p-1 rounded-3xl shadow-2xl flex-grow ${offer.status === "Eligible" ? "bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 border border-emerald-500/30" : "bg-gradient-to-br from-red-500/20 to-red-500/5 border border-red-500/30"}`}>
-                  <div className="p-6 bg-slate-800/90 rounded-[calc(1.5rem-1px)] h-full">
-                    <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status</span>
-                        <span className={`text-2xl font-black uppercase tracking-tight ${offer.status === "Eligible" ? "text-emerald-400" : "text-red-400"}`}>{offer.status}</span>
-                      </div>
-                    </div>
-                    {offer.status === "Eligible" ? (
-                      <div className="space-y-4">
-                        <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-700">
-                          <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Eligible Limit</p>
-                          <p className="text-xl font-bold text-white">₹{offer.eligible_amount.toLocaleString("en-IN")}</p>
-                        </div>
-                        <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-700">
-                          <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Monthly EMI</p>
-                          <p className="text-xl font-bold text-blue-400">₹{offer.EMI.toLocaleString("en-IN")}</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-700">
-                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Interest</p>
-                            <p className="text-sm font-bold text-slate-300">₹{offer["Total Interest"].toLocaleString("en-IN")}</p>
-                          </div>
-                          <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-700">
-                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Repayment</p>
-                            <p className="text-sm font-bold text-slate-300">₹{offer["Total Payment"].toLocaleString("en-IN")}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="p-4 rounded-xl bg-red-900/20 border border-red-500/20"><p className="text-sm font-medium text-red-300">{offer.reason}</p></div>
-                    )}
+              <hr className="border-slate-800" />
+
+              {/* Section 2: Financial & Stability */}
+              <div>
+                <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">2</div>
+                  Financials & Stability
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <InputField label="Annual Income (₹)" name="AnnualIncome" type="number" placeholder="Yearly Salary" />
+                  <InputField label="Insurance Premiums (₹)" name="Insurance Premiums" type="number" placeholder="e.g. 5000" />
+                  <InputField label="Years in Current Job" name="Years in Current Job" type="number" placeholder="e.g. 3" />
+                  <InputField label="Years in Current City" name="Years in Current City" type="number" placeholder="e.g. 4" />
+                  <InputField label="Residential Status" name="Residential Status" options={["Owned", "Rented", "Company Provided"]} />
+                  <InputField label="Residence Type" name="Residence Type" options={["Apartment", "Independent House", "Villa"]} />
+                </div>
+              </div>
+
+              <hr className="border-slate-800" />
+
+              {/* Section 3: Loan Requirements */}
+              <div>
+                <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">3</div>
+                  Loan Requirements
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <InputField label="Loan Type" name="Loan Type" options={["Personal", "Auto", "Mortgage", "Other"]} />
+                  <InputField label="Banking Tenure (Years)" name="Tenure" type="number" placeholder="Years with bank" />
+                  <InputField label="Requested Loan (₹)" name="requested_amount" type="number" placeholder="e.g. 500000" />
+                  <InputField label="Loan Tenure (Years)" name="years" type="number" placeholder="e.g. 5" />
+                  <div className="sm:col-span-2">
+                    <InputField label="Expected Interest Rate (%)" name="annual_interest_rate" type="number" placeholder="e.g. 10.5" />
                   </div>
                 </div>
-              ) : (
-                <div className="flex-grow flex flex-col items-center justify-center p-8 text-center bg-slate-800/50 rounded-3xl border border-slate-700 border-dashed shadow-inner">
-                   <h3 className="text-slate-400 font-black uppercase tracking-widest text-xs mb-2">Awaiting Data</h3>
-                   <p className="text-slate-500 text-[10px] leading-relaxed">Fill out the parameters and calculate to see results.</p>
+              </div>
+
+              {error && (
+                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3">
+                  <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>
+                  {error}
                 </div>
               )}
-            </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-4 rounded-xl transition-all duration-200 transform active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg hover:shadow-indigo-500/25 flex justify-center items-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    Analyzing Profile...
+                  </>
+                ) : "Calculate Eligibility & Offer"}
+              </button>
+            </form>
           </div>
+
+          {/* Right Column: Results sticky container */}
+          <div className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-8">
+
+            {/* Disclaimer Alert */}
+            <div className="bg-amber-500/10 border border-amber-500/20 p-5 rounded-2xl flex items-start gap-3 text-amber-300">
+              {/* Updated SVG to a warning triangle */}
+              <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <h3 className="font-semibold text-sm text-amber-200 mb-1">AI Prediction Disclaimer</h3>
+                <p className="text-xs opacity-90 leading-relaxed text-amber-100/80">
+                  Predictions are based on algorithmic models and historical data. Final approvals are subject to official bank verification.
+                </p>
+              </div>
+            </div>
+
+            {/* Results Card */}
+            {offer ? (
+              <div className={`rounded-3xl shadow-2xl border overflow-hidden ${offer.status === "Approved" ? "bg-[#1E293B] border-emerald-500/30" : "bg-[#1E293B] border-red-500/30"}`}>
+
+                {/* Status Header */}
+                <div className={`p-6 text-center border-b ${offer.status === "Approved" ? "bg-emerald-500/10 border-emerald-500/10" : "bg-red-500/10 border-red-500/10"}`}>
+                  <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-bold tracking-wide uppercase mb-2 ${offer.status === "Approved" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                    {offer.status}
+                  </span>
+                  {offer.status === "Approved" ? (
+                    <p className="text-sm text-slate-300">Congratulations! Your profile looks great.</p>
+                  ) : (
+                    <p className="text-sm text-slate-300">Action required on your application.</p>
+                  )}
+                </div>
+
+                {/* Offer Details */}
+                <div className="p-6">
+                  {offer.status === "Approved" ? (
+                    <div className="space-y-5">
+                      <div className="flex justify-between items-center pb-4 border-b border-slate-700/50">
+                        <span className="text-sm text-slate-400">Max Eligibility</span>
+                        <span className="text-xl font-bold text-white">₹{offer.eligible_amount.toLocaleString("en-IN")}</span>
+                      </div>
+                      <div className="flex justify-between items-center pb-4 border-b border-slate-700/50">
+                        <span className="text-sm text-slate-400">Est. Monthly EMI</span>
+                        <span className="text-xl font-bold text-indigo-400">₹{offer.EMI.toLocaleString("en-IN")}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-slate-400">Total Interest</span>
+                        <span className="text-sm font-medium text-slate-200">₹{offer["Total Interest"].toLocaleString("en-IN")}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-slate-400">Total Repayment</span>
+                        <span className="text-sm font-medium text-slate-200">₹{offer["Total Payment"].toLocaleString("en-IN")}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-slate-300 leading-relaxed">{offer.reason}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-[#1E293B] border border-slate-800 rounded-3xl p-10 flex flex-col items-center justify-center text-center h-[350px]">
+                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                  <svg className="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                </div>
+                <h3 className="text-white font-medium mb-2">Awaiting Analysis</h3>
+                <p className="text-slate-400 text-sm">Submit your profile details on the left to generate your loan prediction and EMI schedule.</p>
+              </div>
+            )}
+          </div>
+
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 };
-
 export default LoanSanctionPredictor;

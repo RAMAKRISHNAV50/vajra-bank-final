@@ -105,7 +105,7 @@ export default function UserDashboard() {
   useEffect(() => {
     if (rawLatestRecord && userData?.isExistedUser) {
       setIsAnalyzing(true);
-      fetch("http://127.0.0.1:8000/api/credit-risk", {
+      fetch("https://vajra-bank-backend.onrender.com/api/credit-risk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(rawLatestRecord)
@@ -158,7 +158,7 @@ export default function UserDashboard() {
         <ShieldExclamation size={24} className="mt-1 flex-shrink-0" />
         <div>
           <h3 className="font-bold text-xs uppercase tracking-widest">AI Prediction Disclaimer</h3>
-          <p className="text-[11px] opacity-80 mt-1">Our AI models can occasionally make mistakes and predictions are based on historical data patterns. Please consult with the respected person or bank authority to know your exact profile status.</p>
+          <p className="text-[11px] opacity-80 mt-1">Our AI models can make mistakes and predictions are based on historical data patterns. Please consult with the respected person or bank authority to know your exact Credit Profile Status.</p>
         </div>
       </div>
 
@@ -263,7 +263,7 @@ export default function UserDashboard() {
               <div className="py-4 min-h-[140px] flex flex-col items-center justify-center bg-slate-950/50 rounded-2xl border border-white/5 mt-4 shadow-inner">
                 {!showCibil && !isCheckingCibil && (
                   <button onClick={handleCibilCheck} className="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase rounded-full transition-all shadow-lg active:scale-95">
-                    Check Financial Health
+                    Check CIBIL Score
                   </button>
                 )}
                 {isCheckingCibil && <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>}

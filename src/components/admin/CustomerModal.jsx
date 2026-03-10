@@ -48,7 +48,7 @@ export default function CustomerModal({ customer, onAction, onClose }) {
                     setRiskData({ riskLevel: "Not Applicable" });
                 } else {
                     try {
-                        const riskRes = await fetch(`http://127.0.0.1:8000/api/predict-risk`, {
+                        const riskRes = await fetch(`https://vajra-bank-backend.onrender.com/api/predict-risk`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(currentData) 
@@ -234,7 +234,7 @@ export default function CustomerModal({ customer, onAction, onClose }) {
                         <div>
                             <h3 className="font-bold text-[9px] sm:text-sm uppercase tracking-widest">AI Prediction Disclaimer</h3>
                             <p className="text-[8px] sm:text-xs opacity-80 mt-0.5 sm:mt-1">
-                                Models may make mistakes. Values are not 100% exact. Please consult a respected representative.
+                               Our AI models can occasionally make mistakes and predictions are based on historical data patterns. Please consult with the respected person or bank authority to know your exact Credit Profile Status..
                             </p>
                         </div>
                     </div>
