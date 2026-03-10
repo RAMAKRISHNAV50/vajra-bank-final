@@ -93,7 +93,7 @@ export default function CustomerTable({ onView }) {
 
     const runBackgroundPredictions = async (users) => {
         try {
-            const response = await fetch('https://vajra-bank-backend.onrender.com/api/predict-risk-batch', {
+            const response = await fetch('http://127.0.0.1:8000/api/predict-risk-batch', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(users.map(u => ({ customerId: u.customerId, ...u.mlFeatures })))
@@ -216,7 +216,7 @@ export default function CustomerTable({ onView }) {
                             <tr className="bg-white/[0.02] border-b border-white/5">
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Entity ID</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Full Identity</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Risk Profile</th>
+                                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Profile Categroy</th>
                                 <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Status</th>
                                 <th className="px-8 py-6 text-right text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Vault Access</th>
                             </tr>

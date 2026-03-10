@@ -48,7 +48,7 @@ export default function CustomerModal({ customer, onAction, onClose }) {
                     setRiskData({ riskLevel: "Not Applicable" });
                 } else {
                     try {
-                        const riskRes = await fetch(`https://vajra-bank-backend.onrender.com/api/predict-risk`, {
+                        const riskRes = await fetch(`http://127.0.0.1:8000/api/predict-risk`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(currentData) 
@@ -242,7 +242,7 @@ export default function CustomerModal({ customer, onAction, onClose }) {
                     {/* KPI SECTION (FIXED FOR MOBILE) */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-10">
                         <StatBox label="Ledger Balance" value={`₹${c.balance.toLocaleString()}`} color="text-emerald-400" icon={<Wallet2/>}/>
-                        <StatBox label="Neural Risk" value={riskLevel} color={riskColor} icon={<ShieldExclamation/>}/>
+                        <StatBox label="Profile Category" value={riskLevel} color={riskColor} icon={<ShieldExclamation/>}/>
                         <StatBox label="CIBIL Score" value={Math.round(c.cibil)} color="text-amber-400" icon={<Activity/>}/>
                         <StatBox label="Credit Limit" value={`₹${c.cardLimit.toLocaleString()}`} color="text-purple-400" icon={<CreditCard/>}/>
                     </div>

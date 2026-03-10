@@ -105,7 +105,7 @@ export default function UserDashboard() {
   useEffect(() => {
     if (rawLatestRecord && userData?.isExistedUser) {
       setIsAnalyzing(true);
-      fetch("https://vajra-bank-backend.onrender.com/api/credit-risk", {
+      fetch("http://127.0.0.1:8000/api/credit-risk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(rawLatestRecord)
@@ -191,7 +191,7 @@ export default function UserDashboard() {
         {/* RISK CARD WITH LOGIC */}
         <div className="bg-slate-900 border border-white/5 p-6 rounded-[2rem] flex flex-col justify-center">
           <p className="text-purple-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-            <Activity className={isAnalyzing ? "animate-spin" : ""} size={14} /> Credit Risk
+            <Activity className={isAnalyzing ? "animate-spin" : ""} size={14} /> Credit Profile
           </p>
           {userData?.isExistedUser ? (
             <>
